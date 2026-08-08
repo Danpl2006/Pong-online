@@ -1,6 +1,9 @@
 from settings import *
+import random
+
 
 class Paddle:
+
     """Класс ракетки..."""
     def __init__(self, x, y,):
         self.x = x
@@ -27,12 +30,15 @@ class Paddle:
             self.y = HEIGHT - self.height
 
 class Ball:
+
+    """Класс мячика..."""
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.size = BALL_SIZE
-        self.dx = BALL_SPEED
-        self.dy = BALL_SPEED
+        self.dx = BALL_SPEED * random.choice([-1, 1])
+        self.dy = BALL_SPEED * random.choice([-1, 1])
+
 
     def update(self):
         self.x += self.dx
@@ -48,5 +54,7 @@ class Ball:
             return "right" # забил правый игрок
         else:
             return None
+
+
     def reset(self):
         self.__init__(WIDTH // 2,HEIGHT // 2)

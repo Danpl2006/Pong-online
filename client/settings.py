@@ -1,22 +1,22 @@
 # Размеры экрана
 WIDTH = 1280
+
 HEIGHT = 720
 
-# Скорость меча
-BALL_SPEED = 7
+BALL_SPEED = 8
 
-# Размер меча
 BALL_SIZE = 20
 
-# Размер ракетки
 PADDLE_WIDTH = 20
+
 PADDLE_HEIGHT = 150
 
-# Скорость ракетки
-PADDLE_SPEED = 6
+PADDLE_SPEED = 8
 
-# Количество кадров в секунду
+PADDLE_ZONE = 250
+
+WINNING_SCORE = 10
+
 FPS = 60
 
-# Цвет Экрана
 BG_COLOR = (0, 0, 0)

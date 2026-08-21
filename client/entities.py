@@ -3,15 +3,17 @@ import random
 
 
 class Paddle:
-
     """Класс ракетки..."""
-    def __init__(self, x, y,):
+    def __init__(self, x, y, min_x, max_x):
         self.x = x
         self.y = y
+        self.min_x = min_x
+        self.max_x = max_x
         self.width = PADDLE_WIDTH
         self.height = PADDLE_HEIGHT
         self.speed = PADDLE_SPEED
         self.dy = 0
+        self.dx = 0
 
     def move_up(self):
         self.dy = -self.speed
@@ -19,18 +21,33 @@ class Paddle:
     def move_down(self):
         self.dy = self.speed
 
-    def stop(self):
+    def move_left(self):
+        self.dx = -self.speed
+
+    def move_right(self):
+        self.dx = self.speed
+
+    def stop_y(self):
         self.dy = 0
+
+    def stop_x(self):
+        self.dx = 0
 
     def update(self):
         self.y += self.dy
+        self.x += self.dx
         if self.y < 0:
             self.y = 0
         elif self.y > HEIGHT - self.height:
             self.y = HEIGHT - self.height
 
-class Ball:
+        if self.x < self.min_x:
+            self.x = self.min_x
+        elif self.x > self.max_x:
+            self.x = self.max_x
 
+
+class Ball:
     """Класс мячика..."""
     def __init__(self, x, y):
         self.x = x

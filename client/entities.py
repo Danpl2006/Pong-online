@@ -7,6 +7,8 @@ class Paddle:
     def __init__(self, x, y, min_x, max_x):
         self.x = x
         self.y = y
+        self.start_x = x  # запоминаем стартовое значение отдельно
+        self.start_y = y
         self.min_x = min_x
         self.max_x = max_x
         self.width = PADDLE_WIDTH
@@ -45,6 +47,9 @@ class Paddle:
             self.x = self.min_x
         elif self.x > self.max_x:
             self.x = self.max_x
+
+    def reset(self):
+        self.__init__(self.start_x, self.start_y, self.min_x, self.max_x)
 
 
 class Ball:

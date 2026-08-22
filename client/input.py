@@ -29,3 +29,25 @@ def handle_input(keys, paddle_left, paddle_right):
         paddle_right.move_left()
     else:
         paddle_right.stop_x()
+
+
+def menu_input(event, menu_options, menu_selected, game_state):
+    if event.key == pygame.K_DOWN:
+        if menu_selected < len(menu_options) - 1:
+            menu_selected += 1
+
+    elif event.key == pygame.K_UP:
+        if menu_selected > 0:
+            menu_selected -= 1
+
+    elif event.key == pygame.K_RETURN:
+        if menu_options[menu_selected] == "Local Game":
+            game_state = "playing"
+        elif menu_options[menu_selected] == "Multiplayer":
+            print("in develop")  # заглушка
+        elif menu_options[menu_selected] == "Settings":
+            print("in develop")
+        elif menu_options[menu_selected] == "Exit":
+            game_state = "exit"
+
+    return menu_selected, game_state

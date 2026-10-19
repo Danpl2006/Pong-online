@@ -1,16 +1,21 @@
-from settings import *
-from collisions import *
+"""
+
+"""
+
+from settings import WIDTH, BOT_REACTION_ZONE
+from collisions import check_paddle_collision
+
 
 def bot_input(paddle, ball, side):
     center_paddle = paddle.y + paddle.height // 2
     center_ball = ball.y + ball.size // 2
 
-    if side == 'left':
+    if side == "left":
         if ball.x >= BOT_REACTION_ZONE:
             paddle.stop_y()
             return
 
-    elif side == 'right':
+    elif side == "right":
         if ball.x <= WIDTH - BOT_REACTION_ZONE:
             paddle.stop_y()
             return
@@ -21,6 +26,7 @@ def bot_input(paddle, ball, side):
         paddle.move_down()
     else:
         paddle.stop_y()
+
 
 def update_menu_background(paddle_left, paddle_right, ball):
     bot_input(paddle_left, ball, "left")

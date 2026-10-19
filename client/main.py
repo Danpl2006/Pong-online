@@ -1,17 +1,25 @@
 import pygame
 from settings import *
 from entities import Paddle, Ball
-from render import  draw, draw_menu
-from input import handle_input, menu_input
+from render import draw, draw_menu
+from input import handle_input, menu_input, settings_input
 from collisions import check_paddle_collision
-from bot import  update_menu_background
+from bot import update_menu_background
+from user_settings import UserSettings
+from menu import Menu
+from display import create_window, recreate_window
 
 # Инициализация pygame и шрифтов
 pygame.init()
 pygame.font.init()
 
+user_settings = UserSettings.load()
+
 # Размер Экрана
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = create_window(user_settings.resolution)
+
+applied_resolution = user_settings.resolution
+game_surface = pygame.Surface((WIDTH, HEIGHT))
 
 # Заголовок экрана
 pygame.display.set_caption("Pong-online")
@@ -20,22 +28,29 @@ pygame.display.set_caption("Pong-online")
 clock = pygame.time.Clock()
 
 font = pygame.font.Font(None, 100)
+
 # Экземпляры классов
 paddle_left = Paddle(0, HEIGHT // 2 - PADDLE_HEIGHT // 2, 0, PADDLE_ZONE)
-paddle_right = Paddle(WIDTH - PADDLE_WIDTH,HEIGHT // 2 - PADDLE_HEIGHT // 2, WIDTH - PADDLE_ZONE, WIDTH - PADDLE_WIDTH)
-ball = Ball(WIDTH // 2,HEIGHT // 2)
+paddle_right = Paddle(WIDTH - PADDLE_WIDTH, HEIGHT // 2 - PADDLE_HEIGHT // 2,
+                      WIDTH - PADDLE_ZONE, WIDTH - PADDLE_WIDTH)
+
+ball = Ball(WIDTH // 2, HEIGHT // 2)
 
 # Переменные для счета
 score_left = 0
 score_right = 0
 pending_goal = None
+
 # "playing" — обычная игра, мяч летает.
 # "score_display" — показываем счёт.
 # "waiting_respawn" — пауза после исчезновения счёта, ждём перед появлением мяча.
 game_state = "menu"
 state_timer = 0
-menu_options = ["Local Game", "Multiplayer", "Settings", "Exit"]
-menu_selected = 0
+
+main_menu = Menu(["Local Game", "Multiplayer",
+                  "Settings", "Exit"])
+
+settings_menu = Menu(list(SETTING_ROWS) + ["Back"])
 
 # Главный цикл игры
 running = True
@@ -47,9 +62,15 @@ while running:
             running = False
 
         if event.type == pygame.KEYDOWN and game_state == "menu":
-            menu_selected, game_state = menu_input(event, menu_options, menu_selected, game_state)
+            game_state = menu_input(event, main_menu, game_state)
 
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE and game_state != "menu":
+        elif event.type == pygame.KEYDOWN and game_state == "settings":
+            game_state = settings_input(event, settings_menu, game_state,
+                                        user_settings)
+
+        if (event.type == pygame.KEYDOWN and
+                event.key == pygame.K_ESCAPE and
+                game_state not in MENU_STATES):
             paddle_left.reset()
             paddle_right.reset()
             ball.reset()
@@ -62,14 +83,20 @@ while running:
         score_left = 0
         score_right = 0
 
+    if previous_state == "settings" and game_state != "settings":
+        user_settings.save()
+
     if game_state == "exit":
         running = False
 
+    if user_settings.resolution != applied_resolution:
+        screen = recreate_window(user_settings.resolution)
+        applied_resolution = user_settings.resolution
 
-    screen.fill(BG_COLOR)
+    game_surface.fill(user_settings.bg_color)
     keys = pygame.key.get_pressed()
 
-    if game_state == "menu":
+    if game_state in MENU_STATES:
         update_menu_background(paddle_left, paddle_right, ball)
     else:
         handle_input(keys, paddle_left, paddle_right)
@@ -82,7 +109,7 @@ while running:
         check_paddle_collision(ball, paddle_right)
         goal = ball.update()
 
-        if  goal == "left":
+        if goal == "left":
             pending_goal = "left"
             game_state = "score_display"
             state_timer = pygame.time.get_ticks()
@@ -93,7 +120,7 @@ while running:
 
     if game_state == "score_display":
         elapsed = pygame.time.get_ticks() - state_timer
-        if elapsed > 700 and  pending_goal == "left":
+        if elapsed > 700 and pending_goal == "left":
             score_left += 1
             if score_left >= WINNING_SCORE:
                 game_state = "game_over"
@@ -114,13 +141,20 @@ while running:
             game_state = "playing"
             ball.reset()
 
-    draw(screen, paddle_left, paddle_right, ball,
-         score_left, score_right, font, game_state)
+    draw(game_surface, paddle_left, paddle_right, ball,
+         score_left, score_right, font, game_state, user_settings)
+
     if game_state == "menu":
-        draw_menu(screen, font, menu_options, menu_selected)
+        draw_menu(game_surface, font, main_menu, user_settings)
+    elif game_state == "settings":
+        draw_menu(game_surface, font, settings_menu, user_settings)
+
+    scaled_surface = pygame.transform.smoothscale(game_surface,
+                                                  screen.get_size())
+    screen.blit(scaled_surface, (0, 0))
 
     pygame.display.flip()
     clock.tick(FPS)
 
+user_settings.save()
 pygame.quit()
-

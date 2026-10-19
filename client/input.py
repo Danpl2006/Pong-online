@@ -1,5 +1,5 @@
 import pygame
-
+from settings import SETTING_ROWS
 
 def handle_input(keys, paddle_left, paddle_right):
     if keys[pygame.K_w]:
@@ -31,23 +31,40 @@ def handle_input(keys, paddle_left, paddle_right):
         paddle_right.stop_x()
 
 
-def menu_input(event, menu_options, menu_selected, game_state):
+def navigate_menu(event, menu):
     if event.key == pygame.K_DOWN:
-        if menu_selected < len(menu_options) - 1:
-            menu_selected += 1
-
+        menu.move_down()
     elif event.key == pygame.K_UP:
-        if menu_selected > 0:
-            menu_selected -= 1
+        menu.move_up()
 
-    elif event.key == pygame.K_RETURN:
-        if menu_options[menu_selected] == "Local Game":
+
+def menu_input(event, menu, game_state):
+    navigate_menu(event, menu)
+
+    if event.key == pygame.K_RETURN:
+        if menu.current == "Local Game":
             game_state = "playing"
-        elif menu_options[menu_selected] == "Multiplayer":
-            print("in develop")  # заглушка
-        elif menu_options[menu_selected] == "Settings":
+        elif menu.current == "Multiplayer":
             print("in develop")
-        elif menu_options[menu_selected] == "Exit":
+        elif menu.current == "Settings":
+            game_state = "settings"
+        elif menu.current == "Exit":
             game_state = "exit"
 
-    return menu_selected, game_state
+    return game_state
+
+
+def settings_input(event, menu, game_state, user_settings):
+    navigate_menu(event, menu)
+
+    if event.key == pygame.K_ESCAPE:
+        game_state = "menu"
+    elif event.key in (pygame.K_LEFT, pygame.K_RIGHT) and menu.current in SETTING_ROWS:
+        step = 1 if event.key == pygame.K_RIGHT else -1
+        field, options = SETTING_ROWS[menu.current]
+        user_settings.cycle(field, options, step)
+
+    elif event.key == pygame.K_RETURN and menu.current == "Back":
+        game_state = "menu"
+
+    return game_state

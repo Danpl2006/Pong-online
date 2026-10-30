@@ -2,12 +2,13 @@ import pygame
 from settings import *
 from entities import Paddle, Ball
 from render import draw, draw_menu
-from input import handle_input, menu_input, settings_input
+from input import handle_input, menu_input, settings_input, side_select_input
 from collisions import check_paddle_collision
 from bot import update_menu_background
 from user_settings import UserSettings
 from menu import Menu
 from display import create_window, recreate_window
+
 
 # Инициализация pygame и шрифтов
 pygame.init()
@@ -46,11 +47,14 @@ pending_goal = None
 # "waiting_respawn" — пауза после исчезновения счёта, ждём перед появлением мяча.
 game_state = "menu"
 state_timer = 0
+game_mode = "local"
+player_side = "left"
 
-main_menu = Menu(["Local Game", "Multiplayer",
+main_menu = Menu(["Local Game with Friend", "Local Game with Computer", "Multiplayer",
                   "Settings", "Exit"])
 
 settings_menu = Menu(list(SETTING_ROWS) + ["Back"])
+side_menu = Menu(["Left Paddle", "Right Paddle", "Back"])
 
 # Главный цикл игры
 running = True
@@ -67,6 +71,8 @@ while running:
         elif event.type == pygame.KEYDOWN and game_state == "settings":
             game_state = settings_input(event, settings_menu, game_state,
                                         user_settings)
+        elif event.type == pygame.KEYDOWN and game_state == "side_select":
+            game_state = side_select_input(event, side_menu, game_state)
 
         if (event.type == pygame.KEYDOWN and
                 event.key == pygame.K_ESCAPE and
@@ -76,12 +82,16 @@ while running:
             ball.reset()
             game_state = "menu"
 
-    if previous_state == "menu" and game_state == "playing":
+    if previous_state in MENU_STATES and game_state == "playing":
         paddle_left.reset()
         paddle_right.reset()
         ball.reset()
         score_left = 0
         score_right = 0
+        game_mode = "vs_computer" if previous_state == "side_select" else "local"
+        if previous_state == "side_select":
+            player_side = "left" if side_menu.current == "Left Paddle" else "right"
+
 
     if previous_state == "settings" and game_state != "settings":
         user_settings.save()
@@ -148,6 +158,8 @@ while running:
         draw_menu(game_surface, font, main_menu, user_settings)
     elif game_state == "settings":
         draw_menu(game_surface, font, settings_menu, user_settings)
+    elif game_state == "side_select":
+        draw_menu(game_surface, font, side_menu, user_settings)
 
     scaled_surface = pygame.transform.smoothscale(game_surface,
                                                   screen.get_size())

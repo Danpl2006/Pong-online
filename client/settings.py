@@ -59,4 +59,4 @@ SETTING_ROWS = {
 }
 
 # Состояния меню
-MENU_STATES = ("menu", "settings")
+MENU_STATES = ("menu", "settings", "side_select")

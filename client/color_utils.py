@@ -18,9 +18,3 @@ def contrast_ratio(color_a, color_b):
     lighter = max(lum_a, lum_b)
     darker = min(lum_a, lum_b)
     return (lighter + 0.05) / (darker + 0.05)
-
-
-if __name__ == "__main__":
-    print(contrast_ratio((0, 0, 0), (255, 255, 255)))
-    print(contrast_ratio((255, 255, 255), (255, 255, 255)))
-    print(contrast_ratio((0, 0, 255), (0, 0, 0)))

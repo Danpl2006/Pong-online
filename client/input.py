@@ -1,6 +1,7 @@
 import pygame
 from settings import SETTING_ROWS
 
+
 def handle_input(keys, paddle_left, paddle_right):
     if keys[pygame.K_w]:
         paddle_left.move_up()
@@ -38,12 +39,19 @@ def navigate_menu(event, menu):
         menu.move_up()
 
 
+def is_back(event, menu):
+    return event.key == pygame.K_ESCAPE or (
+                event.key == pygame.K_RETURN and menu.current == "Back")
+
+
 def menu_input(event, menu, game_state):
     navigate_menu(event, menu)
 
     if event.key == pygame.K_RETURN:
-        if menu.current == "Local Game":
+        if menu.current == "Local Game with Friend":
             game_state = "playing"
+        elif menu.current == "Local Game with Computer":
+            game_state = "side_select"
         elif menu.current == "Multiplayer":
             print("in develop")
         elif menu.current == "Settings":
@@ -56,15 +64,23 @@ def menu_input(event, menu, game_state):
 
 def settings_input(event, menu, game_state, user_settings):
     navigate_menu(event, menu)
-
-    if event.key == pygame.K_ESCAPE:
+    if is_back(event, menu):
         game_state = "menu"
-    elif event.key in (pygame.K_LEFT, pygame.K_RIGHT) and menu.current in SETTING_ROWS:
+
+    elif (event.key in (pygame.K_LEFT, pygame.K_RIGHT)
+          and menu.current in SETTING_ROWS):
         step = 1 if event.key == pygame.K_RIGHT else -1
         field, options = SETTING_ROWS[menu.current]
         user_settings.cycle(field, options, step)
 
-    elif event.key == pygame.K_RETURN and menu.current == "Back":
+    return game_state
+
+
+def side_select_input(event, menu, game_state):
+    navigate_menu(event, menu)
+    if is_back(event, menu):
         game_state = "menu"
+    elif event.key == pygame.K_RETURN:
+        game_state = "playing"
 
     return game_state

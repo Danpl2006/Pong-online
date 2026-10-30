@@ -1,35 +1,44 @@
 import pygame
+from dataclasses import dataclass
 from settings import SETTING_ROWS
 
 
+@dataclass(frozen=True)
+class KeyScheme:
+    up: int
+    down: int
+    left: int
+    right: int
+
+
+WASD = KeyScheme(pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d)
+ARROWS = KeyScheme(pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT)
+
+
+def control_paddle(keys, paddle, *schemes):
+    up = any(keys[scheme.up] for scheme in schemes)
+    down = any(keys[scheme.down] for scheme in schemes)
+    left = any(keys[scheme.left] for scheme in schemes)
+    right = any(keys[scheme.right] for scheme in schemes)
+
+    if up:
+        paddle.move_up()
+    elif down:
+        paddle.move_down()
+    else:
+        paddle.stop_y()
+
+    if left:
+        paddle.move_left()
+    elif right:
+        paddle.move_right()
+    else:
+        paddle.stop_x()
+
+
 def handle_input(keys, paddle_left, paddle_right):
-    if keys[pygame.K_w]:
-        paddle_left.move_up()
-    elif keys[pygame.K_s]:
-        paddle_left.move_down()
-    else:
-        paddle_left.stop_y()
-
-    if keys[pygame.K_a]:
-        paddle_left.move_left()
-    elif keys[pygame.K_d]:
-        paddle_left.move_right()
-    else:
-        paddle_left.stop_x()
-
-    if keys[pygame.K_UP]:
-        paddle_right.move_up()
-    elif keys[pygame.K_DOWN]:
-        paddle_right.move_down()
-    else:
-        paddle_right.stop_y()
-
-    if keys[pygame.K_RIGHT]:
-        paddle_right.move_right()
-    elif keys[pygame.K_LEFT]:
-        paddle_right.move_left()
-    else:
-        paddle_right.stop_x()
+    control_paddle(keys, paddle_left, WASD)
+    control_paddle(keys, paddle_right, ARROWS)
 
 
 def navigate_menu(event, menu):

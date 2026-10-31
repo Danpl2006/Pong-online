@@ -33,7 +33,7 @@ WINNING_SCORE = 10
 # Кадры в секунду
 FPS = 60
 
-MIN_CONTRAST = 3.0
+MIN_CONTRAST = 2.0
 
 # Опции доступные в настройках
 RESOLUTIONS = [
@@ -42,21 +42,32 @@ RESOLUTIONS = [
     ("1920x1080", (1920, 1080))
 ]
 
-COLORS = [("Black", (0, 0, 0)),
-          ("White", (255, 255, 255)),
-          ("Red", (255, 0, 0)),
-          ("Green", (0, 255, 0)),
-          ("Blue", (80, 120, 255)),
-          ("Yellow", (255, 255, 0))
-          ]
+COLORS = [
+    ("color.black", (0, 0, 0)),
+    ("color.white", (255, 255, 255)),
+    ("color.red", (255, 0, 0)),
+    ("color.green", (0, 255, 0)),
+    ("color.blue", (80, 120, 255)),
+    ("color.yellow", (255, 255, 0)),
+]
+
+LANGUAGES = [
+    ("lang.en", "en"),
+    ("lang.ru", "ru"),
+    ("lang.de", "de"),
+    ("lang.es", "es"),
+]
 
 SETTING_ROWS = {
-    "Resolution": ("resolution_index", RESOLUTIONS),
-    "Background": ("bg_color_index", COLORS),
-    "Paddles": ("paddle_color_index", COLORS),
-    "Ball": ("ball_color_index", COLORS),
-    "Text": ("text_color_index", COLORS)
+    "settings.resolution": ("resolution_index", RESOLUTIONS),
+    "settings.background": ("bg_color_index", COLORS),
+    "settings.paddles": ("paddle_color_index", COLORS),
+    "settings.ball": ("ball_color_index", COLORS),
+    "settings.text": ("text_color_index", COLORS),
+    "settings.language": ("language_index", LANGUAGES),
 }
+
+DEFAULT_LANGUAGE = "ru"
 
 # Состояния меню
 MENU_STATES = ("menu", "settings", "side_select")

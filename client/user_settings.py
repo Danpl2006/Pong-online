@@ -1,7 +1,6 @@
 import json
 from dataclasses import dataclass
-from settings import RESOLUTIONS, COLORS, MIN_CONTRAST, SETTING_ROWS, \
-    CONFIG_PATH
+from settings import *
 from color_utils import contrast_ratio
 
 
@@ -12,6 +11,7 @@ class UserSettings:
     paddle_color_index: int = 1
     ball_color_index: int = 1
     text_color_index: int = 1
+    language_index: int = 0
 
     @property
     def bg_color(self):
@@ -33,6 +33,10 @@ class UserSettings:
     def resolution(self):
         return RESOLUTIONS[self.resolution_index][1]
 
+    @property
+    def language(self):
+        return LANGUAGES[self.language_index][1]
+
     def cycle(self, field, options, step):
         for attempt in range(1, len(options) + 1):
             index = (getattr(self, field) + step * attempt) % len(options)
@@ -44,8 +48,12 @@ class UserSettings:
         return options[getattr(self, field)][0]
 
     def is_allowed(self, field, color):
+        if field == "language_index":
+            return True
+
         if field == "resolution_index":
             return True
+
         if field == "bg_color_index":
             others = [self.paddle_color, self.ball_color, self.text_color]
             return all(

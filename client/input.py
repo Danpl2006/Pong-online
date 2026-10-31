@@ -50,22 +50,22 @@ def navigate_menu(event, menu):
 
 def is_back(event, menu):
     return event.key == pygame.K_ESCAPE or (
-            event.key == pygame.K_RETURN and menu.current == "Back")
+            event.key == pygame.K_RETURN and menu.current == "back")
 
 
 def menu_input(event, menu, game_state):
     navigate_menu(event, menu)
 
     if event.key == pygame.K_RETURN:
-        if menu.current == "Local Game with Friend":
+        if menu.current == "menu.local_friend":
             game_state = "playing"
-        elif menu.current == "Local Game with Computer":
+        elif menu.current == "menu.local_computer":
             game_state = "side_select"
-        elif menu.current == "Multiplayer":
+        elif menu.current == "menu.multiplayer":
             print("in develop")
-        elif menu.current == "Settings":
+        elif menu.current == "menu.settings":
             game_state = "settings"
-        elif menu.current == "Exit":
+        elif menu.current == "menu.exit":
             game_state = "exit"
 
     return game_state

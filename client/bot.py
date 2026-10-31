@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from settings import WIDTH, BOT_REACTION_ZONE, PADDLE_SPEED, BOT_ENGAGE_ZONE, \
-    BALL_SIZE, BOT_RELEASE_ZONE, BOT_SPEED_FACTOR
+from settings import *
 from collisions import check_paddle_collision
 from input import control_paddle, WASD, ARROWS
 

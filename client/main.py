@@ -9,7 +9,7 @@ from user_settings import UserSettings
 from menu import Menu
 from display import create_window, recreate_window
 
-# Инициализация pygame и шрифтов
+
 pygame.init()
 pygame.font.init()
 
@@ -21,10 +21,8 @@ screen = create_window(user_settings.resolution)
 applied_resolution = user_settings.resolution
 game_surface = pygame.Surface((WIDTH, HEIGHT))
 
-# Заголовок экрана
 pygame.display.set_caption("Pong-online")
 
-# Ограничитель кадров
 clock = pygame.time.Clock()
 
 font = pygame.font.Font(None, 100)
@@ -41,20 +39,16 @@ score_left = 0
 score_right = 0
 pending_goal = None
 
-# "playing" — обычная игра, мяч летает.
-# "score_display" — показываем счёт.
-# "waiting_respawn" — пауза после исчезновения счёта, ждём перед появлением мяча.
+
 game_state = "menu"
 state_timer = 0
 game_mode = "local"
 player_side = "left"
 
-main_menu = Menu(
-    ["Local Game with Friend", "Local Game with Computer", "Multiplayer",
-     "Settings", "Exit"])
-
-settings_menu = Menu(list(SETTING_ROWS) + ["Back"])
-side_menu = Menu(["Left Paddle", "Right Paddle", "Back"])
+main_menu = Menu(["menu.local_friend", "menu.local_computer",
+                  "menu.multiplayer", "menu.settings", "menu.exit"])
+settings_menu = Menu(list(SETTING_ROWS) + ["back"])
+side_menu = Menu(["side.left", "side.right", "back"])
 
 # Главный цикл игры
 running = True
@@ -90,7 +84,7 @@ while running:
         score_right = 0
         game_mode = "vs_computer" if previous_state == "side_select" else "local"
         if previous_state == "side_select":
-            player_side = "left" if side_menu.current == "Left Paddle" else "right"
+            player_side = "left" if side_menu.current == "side.left" else "right"
 
     if previous_state == "settings" and game_state != "settings":
         user_settings.save()
@@ -155,14 +149,14 @@ while running:
             ball.reset()
 
     draw(game_surface, paddle_left, paddle_right, ball,
-         score_left, score_right, font, game_state, user_settings)
+         score_left, score_right, font, game_state, user_settings, user_settings.language)
 
     if game_state == "menu":
-        draw_menu(game_surface, font, main_menu, user_settings)
+        draw_menu(game_surface, font, main_menu, user_settings, user_settings.language)
     elif game_state == "settings":
-        draw_menu(game_surface, font, settings_menu, user_settings)
+        draw_menu(game_surface, font, settings_menu, user_settings, user_settings.language)
     elif game_state == "side_select":
-        draw_menu(game_surface, font, side_menu, user_settings)
+        draw_menu(game_surface, font, side_menu, user_settings, user_settings.language)
 
     scaled_surface = pygame.transform.smoothscale(game_surface,
                                                   screen.get_size())

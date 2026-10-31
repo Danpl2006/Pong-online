@@ -60,3 +60,7 @@ SETTING_ROWS = {
 
 # Состояния меню
 MENU_STATES = ("menu", "settings", "side_select")
+
+BOT_SPEED_FACTOR = 1.0
+BOT_ENGAGE_ZONE = int(WIDTH * 0.4)
+BOT_RELEASE_ZONE = int(WIDTH * 0.6)

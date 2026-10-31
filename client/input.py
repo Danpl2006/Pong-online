@@ -1,5 +1,5 @@
-import pygame
 from dataclasses import dataclass
+import pygame
 from settings import SETTING_ROWS
 
 
@@ -50,7 +50,7 @@ def navigate_menu(event, menu):
 
 def is_back(event, menu):
     return event.key == pygame.K_ESCAPE or (
-                event.key == pygame.K_RETURN and menu.current == "Back")
+            event.key == pygame.K_RETURN and menu.current == "Back")
 
 
 def menu_input(event, menu, game_state):

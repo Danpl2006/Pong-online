@@ -4,11 +4,10 @@ from entities import Paddle, Ball
 from render import draw, draw_menu
 from input import handle_input, menu_input, settings_input, side_select_input
 from collisions import check_paddle_collision
-from bot import update_menu_background
+from bot import update_menu_background, vs_computer_controls
 from user_settings import UserSettings
 from menu import Menu
 from display import create_window, recreate_window
-
 
 # Инициализация pygame и шрифтов
 pygame.init()
@@ -50,8 +49,9 @@ state_timer = 0
 game_mode = "local"
 player_side = "left"
 
-main_menu = Menu(["Local Game with Friend", "Local Game with Computer", "Multiplayer",
-                  "Settings", "Exit"])
+main_menu = Menu(
+    ["Local Game with Friend", "Local Game with Computer", "Multiplayer",
+     "Settings", "Exit"])
 
 settings_menu = Menu(list(SETTING_ROWS) + ["Back"])
 side_menu = Menu(["Left Paddle", "Right Paddle", "Back"])
@@ -92,7 +92,6 @@ while running:
         if previous_state == "side_select":
             player_side = "left" if side_menu.current == "Left Paddle" else "right"
 
-
     if previous_state == "settings" and game_state != "settings":
         user_settings.save()
 
@@ -109,7 +108,11 @@ while running:
     if game_state in MENU_STATES:
         update_menu_background(paddle_left, paddle_right, ball)
     else:
-        handle_input(keys, paddle_left, paddle_right)
+        if game_mode == "local":
+            handle_input(keys, paddle_left, paddle_right)
+        else:
+            vs_computer_controls(keys, paddle_left, paddle_right, ball,
+                                 player_side, game_state)
         paddle_left.update()
         paddle_right.update()
 

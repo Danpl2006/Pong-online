@@ -8,6 +8,7 @@ from bot import update_menu_background, vs_computer_controls
 from user_settings import UserSettings
 from menu import Menu
 from display import create_window, recreate_window
+from fonts import get_font
 
 
 pygame.init()
@@ -19,13 +20,16 @@ user_settings = UserSettings.load()
 screen = create_window(user_settings.resolution)
 
 applied_resolution = user_settings.resolution
+applied_language = user_settings.language
 game_surface = pygame.Surface((WIDTH, HEIGHT))
 
 pygame.display.set_caption("Pong-online")
 
 clock = pygame.time.Clock()
 
-font = pygame.font.Font(None, 100)
+# Шрифт подбирается под текущий язык.
+# При смене языка в настройках applied_language обновляется и шрифт пересоздаётся.
+font = get_font(user_settings.language, size=80)
 
 # Экземпляры классов
 paddle_left = Paddle(0, HEIGHT // 2 - PADDLE_HEIGHT // 2, 0, PADDLE_ZONE)
@@ -95,6 +99,10 @@ while running:
     if user_settings.resolution != applied_resolution:
         screen = recreate_window(user_settings.resolution)
         applied_resolution = user_settings.resolution
+
+    if user_settings.language != applied_language:
+        applied_language = user_settings.language
+        font = get_font(applied_language, size=80)
 
     game_surface.fill(user_settings.bg_color)
     keys = pygame.key.get_pressed()

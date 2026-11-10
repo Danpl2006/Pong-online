@@ -52,10 +52,14 @@ def draw_menu(screen, font, menu, user_settings, language):
 
         if index == menu.selected:
             text_local = font.render(label, True, user_settings.bg_color)
+            # Фиксированный отступ вокруг выделенного пункта меню.
+            pad_x = 5  # горизонтальный отступ влево/вправо
+            pad_y = -5   # вертикальный отступ вверх/вниз
             pygame.draw.rect(screen, user_settings.text_color,
-                             (WIDTH / 2 - text_local.get_width() // 2 - 10,
-                              y - 5, text_local.get_width() + 20,
-                              text_local.get_height() + 10))
+                             (WIDTH / 2 - text_local.get_width() // 2 - pad_x,
+                              y - pad_y,
+                              text_local.get_width() + 2 * pad_x,
+                              text_local.get_height() + 2 * pad_y))
             screen.blit(text_local,
                         (WIDTH / 2 - text_local.get_width() // 2, y))
         else:
